@@ -96,6 +96,17 @@ message ContractFunctionResult {
      * the list of smart contracts that were created by the function call
      */
     repeated ContractID createdContractIDs = 7;
+
+    /**
+     * the list of actions that occurred within this function call
+     */
+    repeated ContractAction actions = 8;
+
+    /**
+     * the list of state reads and changes caused by this function call
+     */
+    repeated ContractStateChange stateChanges = 9;
+
 }
 
 /**
@@ -149,4 +160,184 @@ message ContractCallLocalResponse {
      * the value returned by the function (if it completed and didn't fail)
      */
     ContractFunctionResult functionResult = 2;
+}
+
+/**
+ * The type of action described by the action proto.
+ */
+enum ContractActionType {
+    /**
+     * default non-value.
+     */
+    NoAction = 0;
+
+    /**
+     * Most CALL, CALLCODE, DELEGATECALL, and STATICCALL, and first action of ContractCall/ContractCallLocal to deployed
+     * contracts. This does not include calls to system or precompiled contracts.
+     */
+    Call = 1;
+
+    /**
+     * CREATE, CREATE2, and first action of ContractCreate.
+     */
+
+    Create = 2;
+
+    /**
+     * like Call, but to precompiled contracts (0x1 to 0x9 as of Berlin)
+     */
+    Precompile = 3;
+
+    /**
+     * Call, but to system contract like HTS or ERC20 facades over Token accounts
+     */
+    System = 4;
+}
+
+/**
+ * A finder grained action with a function result. Sometimes called "internal transactions." The function call itself
+ * will be the first action in a list, followed by sub-action in the order they were executed.
+ */
+message ContractAction {
+
+    /**
+     * The type of this action.
+     */
+    ContractActionType callType = 1;
+
+    /**
+     * Only the first action can come from an account, the rest will come from contracts.  Because of DELEGATECALL
+     * and CALLCODE the caller of actions whose parent is an account may also be an account.
+     */
+    oneof caller {
+        /**
+         * If the caller was a regular account, the AccountID.
+         */
+        AccountID callingAccount = 2;
+
+        /**
+         * If the caller was a smart contract account, the ContractID.
+         */
+        ContractID callingContract = 3;
+    }
+
+    /**
+     * Gas given to this action, the upper limit of gas this action can spend.
+     */
+    uint64 gas = 4;
+
+    /**
+     * Bytes passed in as input data to this action.
+     */
+    bytes input = 5;
+
+    /**
+     * Who this action is directed to.
+     */
+    oneof recipient {
+        /**
+         * The AccountID of the recipient if the recipient is an account. Only HBars will be transferred, no other side
+         * effects should be expected.
+         */
+        AccountID recipientAccount = 6;
+
+        /**
+         * The ContractID of the recipient if the recipient is a smart contract.
+         */
+        ContractID recipientContract = 7;
+
+        /**
+         * If the action was directed at an invalid solidity address, what that address was.
+         */
+        bytes invalidSolidityAddress = 8;
+    }
+
+    /**
+     * The value (int tinybars) that is associated with this action.
+     */
+    int64 value = 9;
+
+    /**
+     * The actual gas spent by this action.
+     */
+    uint64 gasUsed = 10;
+
+    /**
+     * Was the action successful?
+     */
+    bool success = 11;
+
+    /**
+     * The result data of the action.
+     */
+    oneof resultData {
+
+        /**
+         * If successful, the output bytes of the action.
+         */
+        bytes output = 12;
+
+        /**
+         * The contract itself cause the transaction to fail via the `REVERT` operation
+         */
+        bytes revertReason = 13;
+
+        /**
+         * The transaction itself failed without an explicit `REVERT`
+         */
+        bytes error = 14;
+    }
+
+    /**
+     * The nesting depth of this call. The original action is at depth=0.
+     */
+    uint32 callDepth = 15;
+}
+
+/**
+ * The storage changes to a smart contract's storage as a side effect of the function call.
+ */
+message ContractStateChange {
+
+    /**
+     * The contract to which the storage changes apply to
+     */
+    ContractID contractID = 1;
+
+    /**
+     * The list of storage changes.
+     */
+    repeated StorageChange storageChanges = 2;
+}
+
+/**
+ * A storage slot change description.
+ */
+message StorageChange {
+    /**
+     * The storage slot changed.  Up to 32 bytes, big-endian, zero bytes left trimmed.
+     */
+    bytes slot = 1;
+
+    /**
+     * The value read from the storage slot.  Up to 32 bytes, big-endian, zero bytes left trimmed.
+     *
+     * Because of the way SSTORE operations are charged the slot is always read before being written to.
+     */
+    bytes valueRead = 2;
+
+    /**
+     * What the write mode is, either a read-only access or the updated value.
+     */
+    oneof writeMode {
+        /**
+         * The new value written to the slot.  Up to 32 bytes, big-endian, zero bytes left trimmed.
+         */
+        bytes valueWritten = 3;
+
+        /**
+         * If the value was only read this will be true, in lieu of valueWritten.
+         */
+        bool readOnly = 4;
+    }
 }
