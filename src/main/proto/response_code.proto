@@ -476,12 +476,12 @@ enum ResponseCodeEnum {
   /**
    * [Deprecated]. attempt to set negative receive record threshold
    */
-  INVALID_RECEIVE_RECORD_THRESHOLD = 86 [deprecated=true];
+  INVALID_RECEIVE_RECORD_THRESHOLD = 86 [deprecated = true];
 
   /**
    * [Deprecated]. attempt to set negative send record threshold
    */
-  INVALID_SEND_RECORD_THRESHOLD = 87 [deprecated=true];
+  INVALID_SEND_RECORD_THRESHOLD = 87 [deprecated = true];
 
   /**
    * Special Account Operations should be performed by only Genesis account, return this code if it
@@ -1110,4 +1110,10 @@ enum ResponseCodeEnum {
    * unknown protobuf fields.
    */
   INVALID_ALIAS_KEY = 282;
+
+  /**
+   * A fungible token transfer expected a different number of decimals than the involved
+   * type actually has.
+   */
+  UNEXPECTED_TOKEN_DECIMALS = 283;
 }
