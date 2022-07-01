@@ -1325,17 +1325,37 @@ enum ResponseCodeEnum {
   STAKING_NOT_ENABLED = 323;
 
   /**
-   * The range provided in PRNG transaction is negative.
+   * The range provided in RandomGenerate transaction is negative.
    */
   INVALID_PRNG_RANGE = 324;
 
   /**
-   * The maximum number of entities allowed in the current price regime have been created.
-   */
-  MAX_ENTITIES_IN_PRICE_REGIME_HAVE_BEEN_CREATED = 325;
+ * The full prefix signature for transfer precompile is not valid
+ */
+  INVALID_FULL_PREFIX_SIGNATURE_FOR_TRANSFER_PRECOMPILE = 325;
 
   /**
- * The full prefix signature for precompile is not valid
- */
-  INVALID_FULL_PREFIX_SIGNATURE_FOR_PRECOMPILE = 326;
+   * The full prefix signature for associate precompile is not valid
+   */
+  INVALID_FULL_PREFIX_SIGNATURE_FOR_ASSOCIATE_PRECOMPILE = 326;
+
+  /**
+   * The full prefix signature for dissociate precompile is not valid
+   */
+  INVALID_FULL_PREFIX_SIGNATURE_FOR_DISSOCIATE_PRECOMPILE = 327;
+
+  /**
+   * The full prefix signature for burn precompile is not valid
+   */
+  INVALID_FULL_PREFIX_SIGNATURE_FOR_BURN_PRECOMPILE = 328;
+
+  /**
+   * The full prefix signature for mint precompile is not valid
+   */
+  INVALID_FULL_PREFIX_SIGNATURE_FOR_MINT_PRECOMPILE = 329;
+
+  /**
+   * The full prefix signature for token create precompile is not valid
+   */
+  INVALID_FULL_PREFIX_SIGNATURE_FOR_TOKEN_CREATE_PRECOMPILE = 330;
 }
