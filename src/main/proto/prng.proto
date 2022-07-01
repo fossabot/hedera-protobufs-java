@@ -4,7 +4,7 @@ package proto;
 
 /*-
  * ‌
- * Hedera Utility Services Protobuf
+ * Hedera Network Services Protobuf
  * ​
  * Copyright (C) 2018 - 2022 Hedera Hashgraph, LLC
  * ​
@@ -22,17 +22,16 @@ package proto;
  * ‍
  */
 
-option java_package = "com.hederahashgraph.service.proto.java";
-
-import "transaction_response.proto";
-import "transaction.proto";
+option java_package = "com.hederahashgraph.api.proto.java";
+option java_multiple_files = true;
 
 /**
- * The requests and responses for different utility services.
+ * Generates a pseudorandom number
  */
-service UtilService {
+message PrngTransactionBody {
   /**
-   * Generates a pseudorandom number.
+   * If provided and is positive, returns a 32-bit pseudorandom number from the given range in the transaction record.
+   * If not set or set to zero, will return a 384-bit pseudorandom number in the record.
    */
-  rpc prng (Transaction) returns (TransactionResponse);
+  int32 range = 1;
 }

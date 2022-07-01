@@ -22,16 +22,24 @@ package proto;
  * ‍
  */
 
-option java_package = "com.hederahashgraph.api.proto.java";
+option java_package = "com.hedera.services.stream.proto";
 option java_multiple_files = true;
 
-/**
- * Generates a pseudorandom number
- */
-message RandomGenerateTransactionBody {
+import "basic_types.proto";
+
+message ContractBytecode {
   /**
-   * If provided and is positive, returns a 32-bit pseudorandom number from the given range in the transaction record.
-   * If not set, will return a 384-bit pseudorandom number in the record.
-   */
-  int32 range = 1;
+  * The contract to which the bytecodes apply to
+  */
+  ContractID contract_id = 1;
+
+  /**
+  * Contract bytecode during deployment
+  */
+  bytes initcode = 2;
+
+  /**
+  * Contract bytecode after deployment
+  */
+  bytes runtime_bytecode = 3;
 }
